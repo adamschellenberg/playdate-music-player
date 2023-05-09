@@ -2,12 +2,34 @@ import "CoreLibs/object"
 import "CoreLibs/graphics"
 import "CoreLibs/sprites"
 import "CoreLibs/timer"
+import "CoreLibs/crank"
 
 local gfx <const> = playdate.graphics
 
-local playerSprite = nil
+-- local playerSprite = nil
 
-local playerSpeed = 4
+-- local playerSpeed = 4
+
+local function loadMusic()
+	music = {}
+	musicChannel = playdate.sound.channel.new()
+	local track, err = playdate.sound.fileplayer.new("sounds/sample", 1)
+	music = track
+	musicChannel:addSource(music)
+	music:setStopOnUnderrun(false)
+end
+
+local function playMusic()
+	if music:isPlaying() == false then
+		music:play(0)
+	end
+end
+
+local function pauseMusic()
+	if music:isPlaying() == true then
+		music:pause()
+	end
+end
 
 local function initialize()
 	local playerImage = gfx.image.new("images/player")
@@ -24,13 +46,7 @@ local function initialize()
 		end
 	)
 
-	music = {}
-	musicChannel = playdate.sound.channel.new()
-	local track, err = playdate.sound.fileplayer.new("sounds/sample", 1)
-	music = track
-	musicChannel:addSource(music)
-	music:setStopOnUnderrun(false)
-	music:play(0)
+	loadMusic()
 	
 
 end
@@ -38,18 +54,20 @@ end
 initialize()
 
 function playdate.update()
-	if playdate.buttonIsPressed(playdate.kButtonUp) then
-		playerSprite:moveBy(0, -playerSpeed)
+	if playdate.buttonIsPressed(playdate.kButtonA) then
+		playMusic()
 	end
-	if playdate.buttonIsPressed(playdate.kButtonRight) then
-		playerSprite:moveBy(playerSpeed, 0)
+	if playdate.buttonIsPressed(playdate.kButtonB) then
+		pauseMusic()
 	end
-	if playdate.buttonIsPressed(playdate.kButtonDown) then
-		playerSprite:moveBy(0, playerSpeed)
-	end
-	if playdate.buttonIsPressed(playdate.kButtonLeft) then
-		playerSprite:moveBy(-playerSpeed, 0)
-	end
+	-- if playdate.buttonIsPressed(playdate.kButtonDown) then
+	-- 	playerSprite:moveBy(0, playerSpeed)
+	-- end
+	-- if playdate.buttonIsPressed(playdate.kButtonLeft) then
+	-- 	playerSprite:moveBy(-playerSpeed, 0)
+	-- end
 	
 	gfx.sprite.update()
 end
+
+
